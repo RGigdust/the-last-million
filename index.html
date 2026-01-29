@@ -2,90 +2,160 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RGig Empire - Live</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Last Million | العرين</title>
     <style>
-        :root { --gold: #d4af37; --black: #0a0a0a; }
-        body { background: var(--black); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 70px; }
-        .ticker { background: #000; color: var(--gold); padding: 8px; font-size: 12px; white-space: nowrap; overflow: hidden; border-bottom: 1px solid var(--gold); }
-        .ticker-text { display: inline-block; animation: scroll 20s linear infinite; }
-        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-        .header { display: flex; justify-content: space-between; padding: 15px; background: #1a1a1a; border-bottom: 2px solid var(--gold); }
-        .page { display: none; padding: 15px; }
-        .active { display: block; }
-        .card { background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-right: 4px solid var(--gold); }
-        .main-btn { width: 180px; height: 180px; border-radius: 50%; border: 4px solid var(--gold); cursor: pointer; transition: 0.1s; box-shadow: 0 0 20px rgba(212,175,55,0.3); }
-        .main-btn:active { transform: scale(0.9); }
-        .nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--gold); }
-        .nav-item { color: #666; font-size: 11px; text-align: center; }
-        .active-nav { color: var(--gold); font-weight: bold; }
-        .nft-img { width: 100px; filter: drop-shadow(0 0 10px var(--gold)); animation: float 3s infinite ease-in-out; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        :root { --gold: #d4af37; --forest: #050a05; --up: #00ff88; --burn: #ff4444; --ton: #0098ea; --vip: #ff00ea; }
+        body { margin: 0; background: var(--forest); color: white; font-family: 'Cairo', sans-serif; overflow: hidden; touch-action: manipulation; }
+        
+        /* الهيدر الملكي */
+        .header { background: rgba(0,0,0,0.95); padding: 12px; border-bottom: 2px solid var(--gold); display: flex; justify-content: space-around; position: sticky; top: 0; z-index: 1000; font-size: 11px; }
+        .stat b { color: var(--gold); display: block; }
+
+        /* الأقسام */
+        .page { display: none; height: 100vh; padding: 15px; box-sizing: border-box; overflow-y: auto; padding-bottom: 120px; }
+        .page.active { display: block; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 15px; padding: 15px; margin-bottom: 15px; position: relative; border-right: 4px solid var(--gold); }
+        
+        /* الأزرار والأسد */
+        .btn-gold { background: var(--gold); color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; }
+        .btn-vip { background: var(--vip); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
+        .lion-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; border: 4px solid var(--gold); box-shadow: 0 0 25px var(--gold); overflow: hidden; cursor: pointer; }
+        .lion-circle:active { transform: scale(0.95); }
+        .lion-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* الناف بار السفلي */
+        .nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; border-top: 1px solid var(--gold); padding: 10px 0; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; color: #555; font-size: 10px; cursor: pointer; }
+        .nav-item.active { color: var(--gold); font-weight: bold; }
+        
+        /* شارة VIP */
+        .vip-badge { background: var(--vip); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 5px; }
     </style>
 </head>
 <body>
 
-<div class="ticker"><div class="ticker-text">🔥 BTC: $103,450 | 💎 RGig Price: $0.00015 | 🚀 Season 1 Live | ⚠️ Total Supply: 1,000,000 GIG</div></div>
-
-<div class="header">
-    <div>💰 <span id="bal" style="color:var(--gold)">0.0000</span> RGig</div>
-    <button style="background:#24A1DE; color:white; border:none; padding:5px 10px; border-radius:8px; font-size:10px;">ربط المحفظة</button>
-</div>
-
-<div id="h" class="page active" style="text-align:center;">
-    <img src="logo.png" class="main-btn" onclick="mine(event)" onerror="this.src='https://i.imgur.com/8L8T76z.png'">
-    <p>انقر لاستخراج غبار الجيج</p>
-    <div class="card">⚡ الطاقة: <span id="eng">100</span>/100</div>
-</div>
-
-<div id="m" class="page">
-    <h3>📊 الأسعار الحية مقابل الدولار</h3>
-    <div class="card">Bitcoin (BTC) <span style="float:left; color:#2ecc71;">$103,450</span></div>
-    <div class="card">Ethereum (ETH) <span style="float:left; color:#2ecc71;">$4,820</span></div>
-    <div class="card">RGig (GIG) <span style="float:left; color:var(--gold);">$0.00015</span></div>
-</div>
-
-<div id="n" class="page" style="text-align:center;">
-    <h3>🔱 مزاد بطاقات المحاربين</h3>
-    <div class="card">
-        <img src="logo.png" class="nft-img" id="nftArt">
-        <h4 id="nftName">بطاقة المحارب #???</h4>
-        <button onclick="mintNFT()" style="background:var(--gold); border:none; padding:10px; border-radius:10px; width:100%; font-weight:bold;">توليد NFT جديد (1.0 RGig)</button>
+    <div class="header">
+        <div class="stat">💰 <b>$LAST</b> <span id="bal">0.0000</span></div>
+        <div class="stat">✨ <b>غبار</b> <span id="dust-val">0</span></div>
+        <div class="stat">⚡ <b>طاقة</b> <span id="nrg">100</span>%</div>
     </div>
-</div>
 
-<div class="nav">
-    <div class="nav-item active-nav" onclick="sw('h',this)">🏠 العرين</div>
-    <div class="nav-item" onclick="sw('m',this)">📊 التداول</div>
-    <div class="nav-item" onclick="sw('n',this)">🔱 المزاد</div>
-</div>
+    <div id="p-throne" class="page active">
+        <div class="card" style="text-align:center;">
+            <p style="margin:0; font-size:10px; color:#888;">المعروض المتبقي عالمياً</p>
+            <h2 id="supply-left" style="color:var(--up); font-family:monospace;">1,000,000.0000</h2>
+            <div class="burn-stat" style="font-size:9px; color:var(--burn);">🔥 المحروق: <span id="burned-val">0.0000</span></div>
+        </div>
+        <div style="text-align: center;">
+            <div class="lion-circle" onclick="tap(event)" id="lion-body"><img src="1769632844655.png"></div>
+            <p style="font-size:11px; color:var(--gold);">ID: #<span id="user-id"></span> | رتبة: <span id="rank-text">شبل</span></p>
+        </div>
+    </div>
 
-<script>
-    let b = parseFloat(localStorage.getItem('b')) || 0;
-    let e = 100;
-    function mine(ev) {
-        if(e > 0) { b += 0.0001; e -= 1; up(); }
-    }
-    function up() {
-        document.getElementById('bal').innerText = b.toFixed(4);
-        document.getElementById('eng').innerText = e;
-        localStorage.setItem('b', b);
-    }
-    function sw(id, el) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-        el.classList.add('active-nav');
-    }
-    function mintNFT() {
-        if(b >= 1) {
-            b -= 1; up();
-            document.getElementById('nftName').innerText = "بطاقة المحارب #" + Math.floor(Math.random()*999);
-            alert("مبروك! تم توليد NFT ملكي خاص بك");
-        } else { alert("رصيدك لا يكفي (تحتاج 1.0 RGig)"); }
-    }
-    setInterval(() => { if(e < 100) { e++; up(); } }, 3000);
-</script>
+    <div id="p-trade" class="page">
+        <h3 style="color:var(--gold); text-align:center;">البورصة الملكية 📊</h3>
+        <div class="card" style="height:250px; padding:0; overflow:hidden;">
+            <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=D&theme=dark" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+        <div class="card" style="border-right-color:var(--up);">
+            <marquee id="news-ticker" style="color:var(--up); font-size:12px;">🚨 عاجل: ندرة $LAST تثير ضجة في مجتمع TON.. | 🚀 البيتكوين يخترق القمة..</marquee>
+        </div>
+    </div>
+
+    <div id="p-store" class="page">
+        <h3 style="color:var(--gold); text-align:center;">متجر الأحرار 🛒</h3>
+        <div class="card" style="border-right-color:var(--vip);">
+            <h4>رتبة الأسد الملك 👑</h4>
+            <p style="font-size:11px;">تعدين x2 + دخول المحمية دائماً + شارة VIP</p>
+            <button class="btn-vip" onclick="payStars(500, 'VIP')">شراء بـ ⭐️ 500</button>
+        </div>
+        <div class="card" style="border-right-color:var(--ton);">
+            <h4>درع الحماية 🛡️</h4>
+            <p style="font-size:11px;">حماية الرصيد من الضباع لمدة 7 أيام.</p>
+            <button class="btn-gold" style="background:var(--ton); color:white;" onclick="alert('تواصل مع المحفظة قريباً')">شراء بـ 0.5 TON</button>
+        </div>
+    </div>
+
+    <div id="p-hunt" class="page">
+        <h3 style="color:var(--gold); text-align:center;">محمية الصيد 🏹</h3>
+        <div id="hunt-box" class="card" style="height:200px; display:flex; align-items:center; justify-content:center; position:relative;">
+            <p id="hunt-status" style="color:var(--burn);">الموسم مغلق حالياً 🚫</p>
+        </div>
+        <button class="btn-gold" id="enter-hunt" onclick="tryHunt()">دخول المحمية (⚡ 20)</button>
+    </div>
+
+    <div id="p-social" class="page">
+        <h3 style="color:var(--gold); text-align:center;">ديوان الأحرار 💬</h3>
+        <div class="card">
+            <textarea id="post-in" placeholder="زئيرك اليوم.." style="width:100%; background:transparent; border:none; color:white;"></textarea>
+            <button class="btn-gold" style="padding:5px; margin-top:5px;" onclick="post()">نشر</button>
+        </div>
+        <div id="feed"></div>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-item active" onclick="nav('p-throne')">🏛️<br>العرش</div>
+        <div class="nav-item" onclick="nav('p-trade')">📈<br>البورصة</div>
+        <div class="nav-item" onclick="nav('p-store')">🛒<br>المتجر</div>
+        <div class="nav-item" onclick="nav('p-hunt')">🏹<br>الصيد</div>
+        <div class="nav-item" onclick="nav('p-social')">💬<br>الديوان</div>
+    </nav>
+
+    <script>
+        let bal=0, dust=0, nrg=100, supply=1000000, burned=0, isVIP=false, isSeason=false;
+        const uID = Math.floor(1000+Math.random()*9000);
+        document.getElementById('user-id').innerText = uID;
+
+        // التعدين
+        setInterval(() => {
+            if(nrg>0) {
+                let m = isVIP ? 0.00002 : 0.00001;
+                bal += m; supply -= m; nrg -= 0.05; updateUI();
+            }
+        }, 1000);
+
+        function tap(e) {
+            if(nrg>0) {
+                let m = isVIP ? 0.0001 : 0.00005;
+                bal += m; supply -= m; nrg = Math.min(100, nrg+0.1);
+                updateUI(); showFX(e.pageX, e.pageY, "+"+m);
+            }
+        }
+
+        function payStars(amt, item) {
+            if(confirm(`تأكيد دفع ${amt} نجمة؟`)) {
+                if(item==='VIP') { isVIP=true; document.getElementById('rank-text').innerHTML = '<span class="vip-badge">VIP</span> ملك'; }
+                updateUI(); alert("تم التفعيل يا ملك! 👑");
+            }
+        }
+
+        function tryHunt() {
+            if(!isSeason && !isVIP) { alert("الموسم مغلق! للأحرار VIP فقط حالياً."); return; }
+            alert("بدأت المطاردة.. ركز على الفريسة!");
+        }
+
+        function updateUI() {
+            document.getElementById('bal').innerText = bal.toFixed(4);
+            document.getElementById('dust-val').innerText = dust;
+            document.getElementById('nrg').innerText = nrg.toFixed(0);
+            document.getElementById('supply-left').innerText = supply.toLocaleString(undefined,{minimumFractionDigits:4});
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function showFX(x,y,t) {
+            let d = document.createElement('div'); d.innerText = t;
+            d.style.position='fixed'; d.style.left=x+'px'; d.style.top=y+'px'; d.style.color='var(--gold)';
+            document.body.appendChild(d);
+            d.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-50px)'}],800).onfinish=()=>d.remove();
+        }
+    </script>
 </body>
 </html>
